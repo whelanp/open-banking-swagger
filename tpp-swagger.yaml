@@ -15,7 +15,14 @@ info:
     url: 'https://www.nuapay.com/wp-content/uploads/2018/04/nuapay.svg'
 host: 'api.nuapay.com'
 basePath: /tpp
+schemes: 
+  - https
 tags:
+  - name: Onboarding Service
+    description: |-
+      Onboarding endpoints allow a partner to,
+      - Onboard A Merchant
+      - Update the config of a previously onboarded Merchant
   - name: AISP Service
     description: |-
       Account access endpoints allow a merchant to,
@@ -39,6 +46,230 @@ tags:
       - Retrieve the status of a previously initiated payment request
       - Reverse a previously initiated payment request 
 paths:
+
+  /organisations/{id}/applications/open-banking:
+    get:
+      tags:
+        - Onboarding Service
+      summary: Get Open Banking Config For A Merchant
+      description: Get Open Banking Config For A Merchant
+      operationId: enableOpenBankingUsingGET
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the merchant to get open banking config for.
+          required: true
+          type: string
+      responses:
+        200:
+          description: Open Banking Configuration Available
+          schema:
+            $ref: '#/definitions/ConfigureOpenBankingResponseEnvelope'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null                
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null                
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        405:
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null              
+        406:
+          description: "Not Acceptable"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        415:
+          description: "Unsupported Media Type"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        429:
+          description: Too Many Requests
+          headers:
+            Retry-After:
+              type: integer
+              format: int32
+              description: Number in seconds to wait
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null       
+      security:
+        - OriginatorOAuth2:
+          - openbanking_config
+    post:
+      tags:
+        - Onboarding Service
+      summary: Configure Open Banking For A Merchant
+      description: Configure Open Banking For A Merchant
+      operationId: configOpenBankingUsingPOST
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the merchant to configure open banking for.
+          required: true
+          type: string
+        - name: configureOpenBankingRequest
+          in: body
+          description: Configure Open Banking
+          required: true
+          schema: 
+            $ref: '#/definitions/ConfigureOpenBankingRequest'
+      responses:
+        200:
+          description: Open Banking Sucessfully Configured
+          schema:
+            $ref: '#/definitions/ConfigureOpenBankingResponseEnvelope'
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null                
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null                
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        405:
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null              
+        406:
+          description: "Not Acceptable"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        415:
+          description: "Unsupported Media Type"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null               
+        429:
+          description: Too Many Requests
+          headers:
+            Retry-After:
+              type: integer
+              format: int32
+              description: Number in seconds to wait
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          examples:
+            application/json:
+              returnCode: null
+              returnDescription: null
+              details: null       
+      security:
+        - OriginatorOAuth2:
+          - openbanking_config
   /account-requests:
     post:
       tags:
@@ -1235,6 +1466,7 @@ securityDefinitions:
     scopes:
       openbanking_aisp: Account Information Service Provider access.
       openbanking_pisp: Payment Initiation Service Provider access.
+      openbanking_config: configure Open Banking For Merchants.
 definitions:
   Account:
     type: object
@@ -2299,3 +2531,52 @@ definitions:
           2017-04-05T10:43:07+00:00'
     title: Transaction
     description: Transaction
+  ConfigureOpenBankingRequest:
+    type: object
+    properties:
+      accounts:
+        type: array
+        description: The settlement accounts per currency.  
+        items:
+          $ref: '#/definitions/AccountForCurrency'
+      enabled:
+        type: boolean
+        description: If the merchant is enabled or not.
+    title: "ConfigureOpenBankingRequest"
+  AccountForCurrency:
+    type: object
+    required:
+      - currency
+      - account
+    properties:
+      currency:
+        type: string
+        description: The settlement account currency.  
+      account:
+        $ref: '#/definitions/AccountData'
+        description: The account data for the currency.
+    title: "AccountForCurrency"
+  ConfigureOpenBankingResponseEnvelope:
+    type: object
+    required:
+      - data
+      - uri
+    properties:
+      data:
+        $ref: '#/definitions/ConfigureOpenBankingResponse'
+      uri:
+        type: string
+        description: Holds resource uri.
+    title: ConfigureOpenBankingResponseEnvelope
+  ConfigureOpenBankingResponse:
+    type: object
+    properties:
+      accounts:
+        type: array
+        description: The settlement accounts per currency.  
+        items:
+          $ref: '#/definitions/AccountForCurrency'
+      enabled:
+        type: boolean
+        description: If the merchant is enabled or not.
+    title: "ConfigureOpenBankingResponse"
