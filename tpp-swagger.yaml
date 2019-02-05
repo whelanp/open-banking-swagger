@@ -1122,7 +1122,9 @@ paths:
                 currency: GBP
                 email: client@example.com
                 language: en
-                reference: reference
+                remittanceInformation: 
+                    unstructured: The Remittance Information
+                endToEndIdentification: endToEndIdentification
                 orderDetails:
                   items:
                     - name: Flights Outbound
@@ -1150,6 +1152,9 @@ paths:
                 bankId: ybo8zd8j2q
                 aspspAuthUrl: http://sent-test-spr6.sent.local:8080/bank/authorize?response_type=code+id_token&scope=openid+payments&client_id=test&redirect_uri=http%3A%2F%2Fsent-test-spr6%3A8080%2Ftpp%2Fpayment-requests%2Foauth&state=0f58db32-52a3-4878-b8ee-0ad7953db871&nonce=0e74d09e-a1fa-444b-8782-d5dc2992b5fd&request=eyJraWQiOiJOdWFwYXlCYW5rX0tleUlEIiwiYWxnIjoiUlMyNTYifQ.eyJtYXhfYWdlIjo4NjQwMCwiYXVkIjoiaHR0cHM6XC9cL2FwaS5hbHBoYW5iYW5rLmNvbSIsInNjb3BlIjoib3BlbmlkIHBheW1lbnRzIiwiaXNzIjoidGVzdCIsImNsYWltcyI6eyJ1c2VyaW5mbyI6eyJvcGVuYmFua2luZ19pbnRlbnRfaWQiOnsidmFsdWUiOiJ1cm46YWxwaGFiYW5rOmludGVudDpkMjhjNzM3ZC05MTk0LTQwYjMtOTY0Yy1mNDg0NzQ2YWI3Y2QiLCJlc3NlbnRpYWwiOnRydWV9fSwiaWRfdG9rZW4iOnsib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoidXJuOmFscGhhYmFuazppbnRlbnQ6ZDI4YzczN2QtOTE5NC00MGIzLTk2NGMtZjQ4NDc0NmFiN2NkIiwiZXNzZW50aWFsIjp0cnVlfSwiYWNyIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWVzIjpbInVybjpvcGVuYmFua2luZzpwc2QyOnNjYSIsInVybjpvcGVuYmFua2luZzpwc2QyOmNhIl19fX0sInJlc3BvbnNlX3R5cGUiOiJjb2RlIGlkX3Rva2VuIiwicmVkaXJlY3RfdXJpIjoiaHR0cDpcL1wvc2VudC10ZXN0LXNwcjY6ODA4MFwvdHBwXC9wYXltZW50LXJlcXVlc3RzXC9vYXV0aCIsInN0YXRlIjoiMGY1OGRiMzItNTJhMy00ODc4LWI4ZWUtMGFkNzk1M2RiODcxIiwiaWF0IjoxNTQ0NTMzNjkwLCJub25jZSI6IjBlNzRkMDllLWExZmEtNDQ0Yi04NzgyLWQ1ZGMyOTkyYjVmZCIsImNsaWVudF9pZCI6InRlc3QifQ.kEONxzdQRLABwBR0VFfV5yCmknVVMuE_aDj0aaV6gDfQib5175sFB1pUuB4o_n6gdOm8qt3VFQEIvPbcNIGoK8noPXm9u5GK0Mqms7YqaMxYW8S_rGDCtEKNXyyjbFQgkgR9Dnq3rudf5T6YDSxYqtnL7IOh6bbO1jbNgi3w2CYt9G84a6Z2sM8T-LrHaGE_bAZGyS0Tu2ihD19iZ6CnsEtD-8o2_dtSfTI8VzcrUE2e4w-Am-f4cvXs0YZIEOH-nY_x4elp6GKzJf9Lkm6UU7xX98DhQmT-kYz66PNuCorjEDTXYZYZZBcE0eCwNO-OCtH_q5nK2WAnh9UeT__xGg
                 status: PENDING_APPROVAL
+                debtorAccount:
+                  - identification: GB29NWBK60161331926819
+                    schemeName: IBAN
         400:
           description: Bad Request
           schema:
@@ -1258,7 +1263,7 @@ paths:
                 currency: GBP
                 email: client@example.com
                 language: en
-                reference: reference
+                endToEndIdentification: endToEndIdentification
                 orderDetails:
                   items:
                     - name: Flights Outbound
@@ -2154,7 +2159,6 @@ definitions:
       - amount
       - countryCode
       - currency
-      - reference
     properties:
       amount:
         type: number
@@ -2200,13 +2204,19 @@ definitions:
         maxLength: 255
       orderDetails:
         $ref: '#/definitions/OrderDetails'
-      reference:
+      endToEndIdentification:
         type: string
-        description: Reference - a reference that can be used by our customers to
-          link their system with Nuapay.
+        description:  The EndToEndIdentification reference is a reference that can be populated by the debtor (or merchant in the ecommerce space). 
+            This reference is important to the debtor (could be an internal reference Id against the transaction), it Is NOT the reference information that 
+            will be primarily populated on the statement of the creditor (beneficiary).
         minLength: 1
         maxLength: 35
-
+      remittanceInformation:
+        $ref: '#/definitions/RemittanceInformation'
+      debtorAccount:
+        $ref: '#/definitions/AccountData'
+      risk:
+        $ref: '#/definitions/Risk'
     title: PaymentRequest
     example:
       amount: 99.99
@@ -2214,7 +2224,9 @@ definitions:
       currency: GBP
       email: client@example.com
       language: en
-      reference: reference
+      endToEndIdentification: endToEndIdentification
+      remittanceInformation:
+          unstructured: The Remittance Information
       orderDetails:
         items:
           - name: Flights Outbound
@@ -2240,6 +2252,9 @@ definitions:
       integrationType: SELF_HOSTED
       merchantPostAuthUrl: "https://merchant.openbanking.com/result"
       bankId: ybo8zd8j2q
+      debtorAccount:
+        - identification: GB29NWBK60161331926819
+          schemeName: IBAN
   PaymentResponse:
     type: object
     required:
@@ -2316,6 +2331,12 @@ definitions:
           - COMPLETE
           - RECEIVED
           - REVERSED
+      debtorAccount:
+        $ref: '#/definitions/AccountData'
+      remittanceInformation:
+        $ref: '#/definitions/RemittanceInformation'
+      risk:
+        $ref: '#/definitions/Risk'
     title: PaymentResponse
   PaymentResponseEnvelope:
     type: object
@@ -2580,3 +2601,104 @@ definitions:
         type: boolean
         description: If the merchant is enabled or not.
     title: "ConfigureOpenBankingResponse"
+  RemittanceInformation:
+    type: object
+    properties:
+      reference:
+        type: string
+        description: 'Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.  Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money. If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor''s reference or payment remittance identification should be quoted in the end-to-end transaction identification. OB: The Faster Payments Scheme can only accept 18 characters for the ReferenceInformation field - which is where this ISO field will be mapped.'
+      unstructured:
+        type: string
+        description: 'Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts'' receivable system, in an unstructured form.'
+    description: 'Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts'' receivable system.'
+    title: "RemittanceInformation"
+  Risk:
+    description: >-
+      The Risk section is sent by the initiating party to the ASPSP. It is used
+      to specify additional details for risk scoring for Payments.
+    type: object
+    properties:
+      paymentContextCode:
+        $ref: '#/definitions/PaymentContextCode'
+      merchantCategoryCode:
+        description: >-
+          Category code conform to ISO 18245, related to the type of services or
+          goods the merchant provides for the transaction.
+        type: string
+        minLength: 3
+        maxLength: 4
+      merchantCustomerIdentification:
+        description: The unique customer identifier of the PSU with the merchant.
+        type: string
+        minLength: 1
+        maxLength: 70
+      deliveryAddress:
+        description: >-
+          Information that locates and identifies a specific address, as defined
+          by postal services or in free format text.
+        type: object
+        properties:
+          addressLine:
+            items:
+              type: string
+              minLength: 1
+              maxLength: 70
+            type: array
+            description: >-
+              Information that locates and identifies a specific address, as
+              defined by postal services, that is presented in free format text.
+            minItems: 0
+            maxItems: 2
+          streetName:
+            description: Name of a street or thoroughfare.
+            type: string
+            minLength: 1
+            maxLength: 70
+          buildingNumber:
+            description: Number that identifies the position of a building on a street.
+            type: string
+            minLength: 1
+            maxLength: 16
+          postCode:
+            description: >-
+              Identifier consisting of a group of letters and/or numbers that is
+              added to a postal address to assist the sorting of mail.
+            type: string
+            minLength: 1
+            maxLength: 16
+          townName:
+            description: >-
+              Name of a built-up area, with defined boundaries, and a local
+              government.
+            type: string
+            minLength: 1
+            maxLength: 35
+          countrySubDivision:
+            items:
+              type: string
+              minLength: 1
+              maxLength: 35
+            type: array
+            description: >-
+              Identifies a subdivision of a country, for instance state, region,
+              county.
+            minItems: 0
+            maxItems: 2
+          country:
+            description: 'Nation with its own government, occupying a particular territory.'
+            type: string
+            pattern: '^[A-Z]{2,2}$'
+        required:
+          - TownName
+          - Country
+        additionalProperties: false
+    additionalProperties: false
+  PaymentContextCode:
+    description: Specifies the payment context
+    type: string
+    enum:
+      - BillPayment
+      - EcommerceGoods
+      - EcommerceServices
+      - Other
+      - PartyToParty
