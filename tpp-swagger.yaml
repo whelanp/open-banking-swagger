@@ -2759,6 +2759,7 @@ definitions:
         type: string
         description: paymentStatus, the latest payment status
         enum:
+          - PENDING
           - TIMEOUT
           - CONSENT_API_REJECTED
           - PENDING_APPROVAL
