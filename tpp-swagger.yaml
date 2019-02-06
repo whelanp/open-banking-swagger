@@ -595,7 +595,7 @@ paths:
         - Onboarding Service
       summary: Update Open Banking Configuration For A Merchant
       description: Update Open Banking Configuration For A Merchant
-      operationId: configOpenBankingUsingPUT
+      operationId: configOpenBankingMerchantUsingPUT
       produces:
         - application/json
       parameters:
